@@ -36,9 +36,394 @@
 #include <cstdarg>
 #include <cstdio>
 
+size_t buf_size = SCREEN_HEIGHT * SCREEN_WIDTH * sizeof(uint32_t);
+
+uint32_t car_left[SCREEN_HEIGHT][SCREEN_WIDTH];
+uint32_t car_mid[SCREEN_HEIGHT][SCREEN_WIDTH];
+uint32_t car_right[SCREEN_HEIGHT][SCREEN_WIDTH];
+
+void initialize_car_left()
+{
+
+    // sky background
+    for (int i = 0; i < SCREEN_HEIGHT; i++)
+    {
+        for (int j = 0; j < SCREEN_WIDTH; j++)
+        {
+            car_left[i][j] = 0x4477aa;
+        }
+    }
+
+    // road
+    int roadY = 580;
+    for (int j = 0; j < SCREEN_WIDTH; j++)
+    {
+        for (int i = roadY; i < roadY + 120; i++)
+        {
+            if (i < SCREEN_HEIGHT)
+                car_left[i][j] = 0x555555;
+        }
+    }
+
+    // road lines
+    for (int j = 0; j < SCREEN_WIDTH; j += 80)
+    {
+        for (int dj = 0; dj < 40; dj++)
+        {
+            if (j + dj < SCREEN_WIDTH)
+                car_left[roadY + 60][j + dj] = 0xffffff;
+        }
+    }
+
+    // car position
+    int carX = 340;
+    int carY = 540;
+
+    // car body (red)
+    for (int i = carY; i < carY + 60 && i < SCREEN_HEIGHT; i++)
+    {
+        for (int j = carX; j < carX + 144; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_left[i][j] = 0xcc2222;
+        }
+    }
+
+    // car top (cabin)
+    for (int i = carY - 30; i < carY && i >= 0; i++)
+    {
+        for (int j = carX + 24; j < carX + 120; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_left[i][j] = 0xcc2222;
+        }
+    }
+
+    // windows (light blue)
+    for (int i = carY - 28; i < carY - 5; i++)
+    {
+        for (int j = carX + 30; j < carX + 65; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_left[i][j] = 0x88ccff;
+        }
+    }
+    for (int i = carY - 28; i < carY - 5; i++)
+    {
+        for (int j = carX + 75; j < carX + 114; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_left[i][j] = 0x88ccff;
+        }
+    }
+
+    // wheels (black)
+    int wheelY = carY + 52;
+    int wheelPositions[] = { carX + 16, carX + 100 };
+    for (int w = 0; w < 2; w++)
+    {
+        for (int i = wheelY; i < wheelY + 28 && i < SCREEN_HEIGHT; i++)
+        {
+            for (int j = wheelPositions[w]; j < wheelPositions[w] + 24; j++)
+            {
+                if (j < SCREEN_WIDTH)
+                    car_left[i][j] = 0x111111;
+            }
+        }
+    }
+
+    // wheel hubs (gray)
+    int hubPositions[] = { carX + 22, carX + 106 };
+    for (int w = 0; w < 2; w++)
+    {
+        for (int i = wheelY + 8; i < wheelY + 20; i++)
+        {
+            for (int j = hubPositions[w]; j < hubPositions[w] + 8; j++)
+            {
+                if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                    car_left[i][j] = 0x888888;
+            }
+        }
+    }
+
+    // headlights (yellow)
+    for (int i = carY + 10; i < carY + 40; i++)
+    {
+        for (int j = carX + 138; j < carX + 144; j++)
+        {
+            if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                car_left[i][j] = 0xffff44;
+        }
+    }
+
+    // taillights (red-orange)
+    for (int i = carY + 10; i < carY + 40; i++)
+    {
+        for (int j = carX; j < carX + 6; j++)
+        {
+            if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                car_left[i][j] = 0xff4400;
+        }
+    }
+}
+
+void initialize_car_mid()
+{
+
+    // sky background
+    for (int i = 0; i < SCREEN_HEIGHT; i++)
+    {
+        for (int j = 0; j < SCREEN_WIDTH; j++)
+        {
+            car_mid[i][j] = 0x4477aa;
+        }
+    }
+
+    // road
+    int roadY = 580;
+    for (int j = 0; j < SCREEN_WIDTH; j++)
+    {
+        for (int i = roadY; i < roadY + 120; i++)
+        {
+            if (i < SCREEN_HEIGHT)
+                car_mid[i][j] = 0x555555;
+        }
+    }
+
+    // road lines
+    for (int j = 0; j < SCREEN_WIDTH; j += 80)
+    {
+        for (int dj = 0; dj < 40; dj++)
+        {
+            if (j + dj < SCREEN_WIDTH)
+                car_mid[roadY + 60][j + dj] = 0xffffff;
+        }
+    }
+
+    // car position
+    int carX = 440;
+    int carY = 540;
+
+    // car body (red)
+    for (int i = carY; i < carY + 60 && i < SCREEN_HEIGHT; i++)
+    {
+        for (int j = carX; j < carX + 144; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_mid[i][j] = 0xcc2222;
+        }
+    }
+
+    // car top (cabin)
+    for (int i = carY - 30; i < carY && i >= 0; i++)
+    {
+        for (int j = carX + 24; j < carX + 120; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_mid[i][j] = 0xcc2222;
+        }
+    }
+
+    // windows (light blue)
+    for (int i = carY - 28; i < carY - 5; i++)
+    {
+        for (int j = carX + 30; j < carX + 65; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_mid[i][j] = 0x88ccff;
+        }
+    }
+    for (int i = carY - 28; i < carY - 5; i++)
+    {
+        for (int j = carX + 75; j < carX + 114; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_mid[i][j] = 0x88ccff;
+        }
+    }
+
+    // wheels (black)
+    int wheelY = carY + 52;
+    int wheelPositions[] = { carX + 16, carX + 100 };
+    for (int w = 0; w < 2; w++)
+    {
+        for (int i = wheelY; i < wheelY + 28 && i < SCREEN_HEIGHT; i++)
+        {
+            for (int j = wheelPositions[w]; j < wheelPositions[w] + 24; j++)
+            {
+                if (j < SCREEN_WIDTH)
+                    car_mid[i][j] = 0x111111;
+            }
+        }
+    }
+
+    // wheel hubs (gray)
+    int hubPositions[] = { carX + 22, carX + 106 };
+    for (int w = 0; w < 2; w++)
+    {
+        for (int i = wheelY + 8; i < wheelY + 20; i++)
+        {
+            for (int j = hubPositions[w]; j < hubPositions[w] + 8; j++)
+            {
+                if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                    car_mid[i][j] = 0x888888;
+            }
+        }
+    }
+
+    // headlights (yellow)
+    for (int i = carY + 10; i < carY + 40; i++)
+    {
+        for (int j = carX + 138; j < carX + 144; j++)
+        {
+            if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                car_mid[i][j] = 0xffff44;
+        }
+    }
+
+    // taillights (red-orange)
+    for (int i = carY + 10; i < carY + 40; i++)
+    {
+        for (int j = carX; j < carX + 6; j++)
+        {
+            if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                car_mid[i][j] = 0xff4400;
+        }
+    }
+}
+
+void initialize_car_right()
+{
+
+    // sky background
+    for (int i = 0; i < SCREEN_HEIGHT; i++)
+    {
+        for (int j = 0; j < SCREEN_WIDTH; j++)
+        {
+            car_right[i][j] = 0x4477aa;
+        }
+    }
+
+    // road
+    int roadY = 580;
+    for (int j = 0; j < SCREEN_WIDTH; j++)
+    {
+        for (int i = roadY; i < roadY + 120; i++)
+        {
+            if (i < SCREEN_HEIGHT)
+                car_right[i][j] = 0x555555;
+        }
+    }
+
+    // road lines
+    for (int j = 0; j < SCREEN_WIDTH; j += 80)
+    {
+        for (int dj = 0; dj < 40; dj++)
+        {
+            if (j + dj < SCREEN_WIDTH)
+                car_right[roadY + 60][j + dj] = 0xffffff;
+        }
+    }
+
+    // car position
+    int carX = 540;
+    int carY = 540;
+
+    // car body (red)
+    for (int i = carY; i < carY + 60 && i < SCREEN_HEIGHT; i++)
+    {
+        for (int j = carX; j < carX + 144; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_right[i][j] = 0xcc2222;
+        }
+    }
+
+    // car top (cabin)
+    for (int i = carY - 30; i < carY && i >= 0; i++)
+    {
+        for (int j = carX + 24; j < carX + 120; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_right[i][j] = 0xcc2222;
+        }
+    }
+
+    // windows (light blue)
+    for (int i = carY - 28; i < carY - 5; i++)
+    {
+        for (int j = carX + 30; j < carX + 65; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_right[i][j] = 0x88ccff;
+        }
+    }
+    for (int i = carY - 28; i < carY - 5; i++)
+    {
+        for (int j = carX + 75; j < carX + 114; j++)
+        {
+            if (j < SCREEN_WIDTH)
+                car_right[i][j] = 0x88ccff;
+        }
+    }
+
+    // wheels (black)
+    int wheelY = carY + 52;
+    int wheelPositions[] = { carX + 16, carX + 100 };
+    for (int w = 0; w < 2; w++)
+    {
+        for (int i = wheelY; i < wheelY + 28 && i < SCREEN_HEIGHT; i++)
+        {
+            for (int j = wheelPositions[w]; j < wheelPositions[w] + 24; j++)
+            {
+                if (j < SCREEN_WIDTH)
+                    car_right[i][j] = 0x111111;
+            }
+        }
+    }
+
+    // wheel hubs (gray)
+    int hubPositions[] = { carX + 22, carX + 106 };
+    for (int w = 0; w < 2; w++)
+    {
+        for (int i = wheelY + 8; i < wheelY + 20; i++)
+        {
+            for (int j = hubPositions[w]; j < hubPositions[w] + 8; j++)
+            {
+                if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                    car_right[i][j] = 0x888888;
+            }
+        }
+    }
+
+    // headlights (yellow)
+    for (int i = carY + 10; i < carY + 40; i++)
+    {
+        for (int j = carX + 138; j < carX + 144; j++)
+        {
+            if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                car_right[i][j] = 0xffff44;
+        }
+    }
+
+    // taillights (red-orange)
+    for (int i = carY + 10; i < carY + 40; i++)
+    {
+        for (int j = carX; j < carX + 6; j++)
+        {
+            if (i < SCREEN_HEIGHT && j < SCREEN_WIDTH)
+                car_right[i][j] = 0xff4400;
+        }
+    }
+}
+
 // initialize game data in this function
 void initialize()
 {
+    initialize_car_left();
+    initialize_car_mid();
+    initialize_car_right();
+    memcpy(buffer, car_mid, buf_size);
 }
 
 // this function is called to update game data,
@@ -51,6 +436,15 @@ void act(float dt)
 // uint32_t buffer[SCREEN_WIDTH][SCREEN_HEIGHT] - is an array of 32-bit colors (8 bits per R, G, B)
 void draw()
 {
+    if (is_key_pressed(VK_LEFT)) {
+        memcpy(buffer, car_left, buf_size);
+    }
+    else if (is_key_pressed(VK_SPACE)) {
+        memcpy(buffer, car_mid, buf_size);
+    }
+    else if (is_key_pressed(VK_RIGHT)) {
+        memcpy(buffer, car_right, buf_size);
+    }
 }
 
 // free game data in this function
