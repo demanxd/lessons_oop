@@ -31,6 +31,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include "Logger.h"
 
 
 uint32_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH] = { 0 };
@@ -48,6 +49,9 @@ static bool quited = false;
 static XImage* ximg = nullptr;
 
 static struct timeval tv_ref;
+
+static bool _key_states[256] = { false };
+static bool _mouse_button_states[2] = { false };
 
 bool is_window_active()
 {
@@ -95,6 +99,26 @@ bool is_key_pressed(int button_vk_code)
   return false;
 }
 
+bool is_key_just_pressed(int button_vk_code)
+{
+  bool current = is_key_pressed(button_vk_code);
+  bool prev = _key_states[button_vk_code];
+  return current && !prev;
+}
+
+bool is_key_just_released(int button_vk_code)
+{
+  bool current = is_key_pressed(button_vk_code);
+  bool prev = _key_states[button_vk_code];
+  return !current && prev;
+}
+
+void update_key_states()
+{
+  for (int i = 0; i < 256; i++)
+    _key_states[i] = is_key_pressed(i);
+}
+
 bool is_mouse_button_pressed(int mouse_button_index)
 {
   if (!is_active || !display)
@@ -117,6 +141,34 @@ bool is_mouse_button_pressed(int mouse_button_index)
   }
 
   return false;
+}
+
+bool is_mouse_button_just_pressed(int mouse_button_index)
+{
+  bool current = is_mouse_button_pressed(mouse_button_index);
+  bool prev = _mouse_button_states[mouse_button_index];
+
+  if (current && !prev)
+    Logger::instance().log(LogLevel::INFO, "ENGINE", "button %d was just pressed, current = %d, prev = %d,  current && !prev = %d", mouse_button_index, current, prev, current && !prev);
+
+  return current && !prev;
+}
+
+bool is_mouse_button_just_released(int mouse_button_index)
+{
+  bool current = is_mouse_button_pressed(mouse_button_index);
+  bool prev = _mouse_button_states[mouse_button_index];
+
+  if (!current && prev)
+    Logger::instance().log(LogLevel::INFO, "ENGINE", "button %d was just released, current = %d, prev = %d, !current && prev = %d", mouse_button_index, current, prev, !current && prev);
+
+  return !current && prev;
+}
+
+void update_mouse_states()
+{
+  _mouse_button_states[0] = is_mouse_button_pressed(0);
+  _mouse_button_states[1] = is_mouse_button_pressed(1);
 }
 
 int get_cursor_x()
@@ -346,6 +398,9 @@ int main(int, char**)
         dt = 0.1f;
 
       act(dt);
+
+      update_key_states();
+      update_mouse_states();
 
       if (!quited) {
         draw();

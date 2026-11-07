@@ -44,9 +44,17 @@ extern uint32_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 
 // VK_SPACE, VK_RIGHT, VK_LEFT, VK_UP, VK_DOWN, 'A', 'B' ...
 bool is_key_pressed(int button_vk_code);
+bool is_key_just_pressed(int button_vk_code);
+bool is_key_just_released(int button_vk_code);
+
+void update_key_states();
 
 // 0 - left button, 1 - right button
 bool is_mouse_button_pressed(int button);
+bool is_mouse_button_just_pressed(int button);
+bool is_mouse_button_just_released(int button);
+
+void update_mouse_states();
 
 int get_cursor_x();
 int get_cursor_y();

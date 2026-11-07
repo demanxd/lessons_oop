@@ -173,4 +173,16 @@ void car::act(float dt)
     else if (is_key_pressed(VK_DOWN)) {
         this->y = default_y + 20;
     }
+    if (is_mouse_button_just_pressed(0)) {
+        this->x = default_x + 150;
+    }
+    else if (is_mouse_button_just_released(0)) {
+        this->x = default_x - 150;
+    }
+    else if (is_mouse_button_just_pressed(1)) {
+        this->y = default_y - 20;
+    }
+    else if (is_mouse_button_just_released(1)) {
+        this->y = default_y + 20;
+    }
 }
